@@ -1,0 +1,27 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+config.json
+*.log
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# JetBrains Rider
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# WebView2 cache
+**/WebView2/
+
+# Temporary files
+*.tmp
+*.temp

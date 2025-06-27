@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <style>
+    html, body, #container { 
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      width: 100%; 
+      overflow: hidden; 
+      font-family: 'Consolas', 'BIZ UDGothic', monospace;
+      background: transparent;
+    }
+  </style>
+  <script src='wwwroot/lib/monaco-editor/vs/loader.js'></script>
+  <script>
+    let editor;
+    
+    // Console logging utility - controlled by config
+    function consolelog(message) {
+      if (window.enableConsoleLogging) {
+        console.log(message);
+      }
+    }
+    
+    function consoleerror(message) {
+      if (window.enableConsoleLogging) {
+        console.error(message);
+      }
+    }
+    
+    require.config({ paths: { 'vs': 'wwwroot/lib/monaco-editor/vs' }});
+    require(['vs/editor/editor.main'], function () {
+      // Define custom theme with transparent background
+      monaco.editor.defineTheme('transparent-dark', {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': '#1e1e1e60', // More transparent dark background
+          'editor.lineHighlightBackground': '#ffffff06',
+          'editorCursor.foreground': '#ffffff',
+          'editor.selectionBackground': '#4a90e230'
+        }
+      });
+
+      editor = monaco.editor.create(document.getElementById('container'), {
+        value: '',
+        language: 'plaintext',
+        theme: 'transparent-dark',
+        fontSize: 13,
+        fontFamily: 'Consolas, BIZ UDGothic, monospace',
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        lineNumbers: 'off',
+        glyphMargin: false,
+        folding: false,
+        lineDecorationsWidth: 0,
+        lineNumbersMinChars: 0,
+        overviewRulerLanes: 0,
+        hideCursorInOverviewRuler: true,
+        overviewRulerBorder: false,
+        renderLineHighlight: 'none',
+        contextmenu: false,
+        quickSuggestions: false,
+        suggestOnTriggerCharacters: false,
+        acceptSuggestionOnEnter: 'off',
+        tabCompletion: 'off',
+        wordBasedSuggestions: false,
+        parameterHints: { enabled: false },
+        codeLens: false,
+        renderWhitespace: 'none',
+        renderControlCharacters: false,
+        fontLigatures: false,
+        disableLayerHinting: false,
+        automaticLayout: true
+      });
+      
+      // Handle keyboard shortcuts with better error handling
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, function() {
+        try {
+          consolelog('Ctrl+Enter pressed in Monaco Editor');
+          const text = editor.getValue();
+          consolelog('Text to copy: ' + text);
+          
+          if (window.chrome && window.chrome.webview) {
+            window.chrome.webview.postMessage(JSON.stringify({
+              type: 'copyAndClose',
+              text: text
+            }));
+            consolelog('Message sent successfully');
+          } else {
+            consoleerror('webview API not available');
+          }
+        } catch (error) {
+          consoleerror('Error in Ctrl+Enter handler: ' + error);
+        }
+      });
+      
+      editor.addCommand(monaco.KeyCode.Escape, function() {
+        try {
+          consolelog('Escape pressed in Monaco Editor');
+          
+          if (window.chrome && window.chrome.webview) {
+            window.chrome.webview.postMessage(JSON.stringify({
+              type: 'close'
+            }));
+            consolelog('Close message sent successfully');
+          } else {
+            consoleerror('webview API not available');
+          }
+        } catch (error) {
+          consoleerror('Error in Escape handler: ' + error);
+        }
+      });
+      
+      // Focus editor when ready
+      editor.focus();
+    });
+    
+    // Functions to be called from C#
+    function getText() {
+      return editor ? editor.getValue() : '';
+    }
+    
+    function setText(text) {
+      if (editor) {
+        editor.setValue(text);
+        editor.focus();
+      }
+    }
+    
+    function focusEditor() {
+      if (editor) {
+        editor.focus();
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id='container'></div>
+</body>
+</html>
