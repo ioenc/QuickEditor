@@ -25,7 +25,7 @@ It's useful when you want to quickly write multi-line text (e.g., for pasting in
 - **Global hotkey**: `Ctrl + Shift + F` to trigger the editor instantly
 - **Professional text editing** with Monaco Editor (VS Code's editor component)
 - **Multi-line text editing** with syntax highlighting capabilities
-- **Clipboard integration**: `Ctrl + Enter` to copy text and close, `Esc` to close without copying
+- **Clipboard integration**: `Ctrl + Enter` to copy text and close, `Esc` to show confirmation dialog before closing
 
 ### Smart Positioning & Multi-Display Support
 - **Multi-display aware**: Automatically detects which display contains the mouse cursor
@@ -45,6 +45,9 @@ It's useful when you want to quickly write multi-line text (e.g., for pasting in
 - **Immediate keyboard focus**: No click required after hotkey activation
 - **Instant input ready**: Advanced Windows API focus handling ensures immediate typing
 - **International input support**: Full IME support for Japanese, Chinese, Korean, and other languages
+- **Accidental close prevention**: ESC key shows confirmation dialog
+  - Confirm with Yes/No buttons or Enter/Space keys for quick interaction
+  - Prevents accidental loss of work when typing quickly
 - **System tray integration**: Runs quietly in background with custom icon and minimal system impact
 - **Custom branding**: Professional application icon for both executable and system tray
 

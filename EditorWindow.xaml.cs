@@ -179,12 +179,24 @@ namespace QuickEditor
         }
 
         /// <summary>
-        /// Handle close window without copying
+        /// Handle close window without copying - shows confirmation dialog
         /// </summary>
         private void HandleCloseOnly()
         {
-            Logger.Info("Editor closed with Escape key");
-            Close();
+            Logger.Info("Editor close requested with Escape key");
+            
+            // Show custom confirmation dialog matching editor theme
+            var confirmed = ConfirmDialog.ShowConfirmation(this, "Are you sure you want to close the editor?");
+            
+            if (confirmed)
+            {
+                Logger.Info("Editor closed confirmed by user");
+                Close();
+            }
+            else
+            {
+                Logger.Info("Editor close cancelled by user");
+            }
         }
 
         /// <summary>

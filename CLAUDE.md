@@ -50,8 +50,15 @@ dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=
 - Features movable title bar with close button
 - Handles keyboard shortcuts via JavaScript:
   - Ctrl+Enter: Copy text to clipboard and close
-  - Esc: Close without copying
+  - Esc: Show confirmation dialog before closing
 - Dark themed with rounded corners and configurable transparency
+
+**ConfirmDialog** (`ConfirmDialog.xaml/.cs`)
+- Custom confirmation dialog matching editor's dark theme
+- Compact size (220x100px) with rounded corners and transparency
+- Prevents accidental editor closure when ESC is pressed
+- Keyboard shortcuts: Enter/Space for Yes, ESC for No
+- Owner window centering for proper positioning
 
 **HotKeyManager** (`HotKeyManager.cs`)
 - Win32 API wrapper for global hotkey registration
@@ -69,7 +76,7 @@ dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=
 
 ### UI Behavior
 - Editor window is topmost with rounded corners and custom title bar
-- Movable via title bar drag, closable via close button or Esc key
+- Movable via title bar drag, closable via close button or Esc key (with confirmation)
 - **Fully resizable window** with custom resize handles on all edges and corners (not just bottom-right)
 - **Configurable transparency** - set windowOpacity in config.json (0.0 = transparent, 1.0 = opaque)
 - **Smart multi-display positioning**:
@@ -80,6 +87,9 @@ dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=
 - Minimum size: 300x150px to ensure usability
 - **Immediate keyboard focus** with comprehensive Windows API focus handling
 - **Instant input ready** - no manual click required after hotkey activation
+- **Accidental close prevention**: ESC key shows themed confirmation dialog
+  - Dialog matches editor's dark theme and positioning
+  - Quick keyboard interaction: Enter/Space for Yes, ESC for No
 - WebView2 hosts Monaco Editor for professional VS Code-like editing experience
 
 ### Global Hotkey Integration
@@ -185,3 +195,15 @@ _hotKeyManager.RegisterHotKey(ModifierKeys.Control | ModifierKeys.Alt, Key.Q, On
 - Focus handling uses multiple strategies: Windows API calls, WebView2 focus, and Monaco Editor focus
 - Resize handles use Windows API `SendMessage` for native OS resize behavior
 - Multi-display support via `System.Windows.Forms.Screen.FromPoint()` for accurate positioning
+
+### Confirmation Dialog Customization
+- **ConfirmDialog** provides themed confirmation for ESC key presses
+- Modify `ConfirmDialog.xaml` for visual changes:
+  - Size: Adjust `Width` and `Height` properties (default: 250x100)
+  - Colors: Match `Background="#FF1E1E1E"` and `Foreground="#CCC"` with editor theme
+  - Button styling: Custom hover effects in XAML button styles
+- Keyboard handling in `ConfirmDialog.xaml.cs`:
+  - `KeyDown` event handles Enter/Space for Yes action
+  - `IsDefault="True"` on Yes button for Enter key
+  - `IsCancel="True"` on No button for ESC key
+- Message customization via `ConfirmDialog.ShowConfirmation()` static method
